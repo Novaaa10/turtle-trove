@@ -4,14 +4,16 @@ using UnityEngine;
 using UnityEngine.Tilemaps;
 using TMPro;
 
-public class TurtleGerak : MonoBehaviour
+public class MoleGerak : MonoBehaviour
 {
     public float speed = 5f;
     public float digSpeed = 3f;
-
+    private bool isDead = false;
     public Tilemap potionTilemap;
     public Tilemap petiTilemap;
     public Tilemap diamondTilemap;
+    private bool isInvincible = false;
+    public float invincibleTime = 1f;
 
     public int maxHP = 50;
     public int currentHP;
@@ -30,9 +32,11 @@ public class TurtleGerak : MonoBehaviour
     void Update()
     {
         float move = Input.GetAxis("Horizontal");
+     
+            if (isDead) return; // ❗ kalau mati, semua berhenti
 
-        // Gerak kiri kanan
-        transform.Translate(new Vector2(move * speed * Time.deltaTime, 0));
+            // Gerak kiri kanan
+            transform.Translate(new Vector2(move * speed * Time.deltaTime, 0));
 
         // Gali ke bawah
         bool isDigging = Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.DownArrow);
@@ -55,12 +59,66 @@ public class TurtleGerak : MonoBehaviour
                 drainTimer = 0f;
             }
         }
+        if (move > 0)
+        {
+            transform.localScale = new Vector3(1.5f, 1.5f, 1.5f);
+        }
+        else if (move < 0)
+        {
+            transform.localScale = new Vector3(-1.5f, 1.5f, 1.5f);
+        }
+
 
         CekDiamond();
         CekPotion();
         CekPeti();
     }
+    public void KenaDamage(int damage)
+    {
+        if (isInvincible || isDead) return;
 
+        currentHP -= damage;
+        currentHP = Mathf.Clamp(currentHP, 0, maxHP);
+        UpdateHPText();
+
+        if (currentHP <= 0)
+        {
+            Mati();
+            return;
+        }
+
+        StartCoroutine(InvincibleEffect());
+    }
+    void Mati()
+    {
+        isDead = true;
+
+        Debug.Log("Mole Mati!");
+
+        // optional: disable collider biar ga kena lagi
+        GetComponent<Collider2D>().enabled = false;
+
+        // optional: ubah warna / transparan
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+        sr.color = Color.gray;
+    }
+    IEnumerator InvincibleEffect()
+    {
+        isInvincible = true;
+
+        SpriteRenderer sr = GetComponent<SpriteRenderer>();
+
+        for (int i = 0; i < 5; i++)
+        {
+            sr.enabled = false;
+            yield return new WaitForSeconds(0.1f);
+            sr.enabled = true;
+            yield return new WaitForSeconds(0.1f);
+        }
+
+        yield return new WaitForSeconds(invincibleTime);
+        isInvincible = false;
+    }
     void UpdateHPText()
     {
         hpText.text = currentHP + "/" + maxHP;

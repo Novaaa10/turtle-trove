@@ -41,3 +41,30 @@ TagManager:
   - name: Default
     uniqueID: 0
     locked: 0
+  - name: langit
+    uniqueID: 3525791169
+    locked: 0
+  - name: tanah
+    uniqueID: 3914273775
+    locked: 0
+  - name: turtle
+    uniqueID: 2168243529
+    locked: 0
+  - name: awan
+    uniqueID: 3381189641
+    locked: 0
+  - name: potion
+    uniqueID: 616101341
+    locked: 0
+  - name: diamon
+    uniqueID: 67111367
+    locked: 0
+  - name: peti
+    uniqueID: 1103350453
+    locked: 0
+  - name: mole
+    uniqueID: 3826206405
+    locked: 0
+  - name: tanuki
+    uniqueID: 2778784369
+    locked: 0
